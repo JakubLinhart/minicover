@@ -131,6 +131,7 @@ namespace MiniCover
             services.AddTransient<ICommand, CloverReportCommand>();
             services.AddTransient<ICommand, CoverallsReportCommand>();
             services.AddTransient<ICommand, CoberturaReportCommand>();
+            services.AddTransient<ICommand, ImpactingFilesReportCommand>();
 
             services.AddTransient<IWorkingDirectoryOption, WorkingDirectoryOption>();
             services.AddTransient<ICoverageLoadedFileOption, CoverageLoadedFileOption>();
