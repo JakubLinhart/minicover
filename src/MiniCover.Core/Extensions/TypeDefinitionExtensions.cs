@@ -11,7 +11,6 @@ namespace MiniCover.Core.Extensions
         {
             return typeDefinition.GetAllMethods(includeNestedTypes)
                 .SelectMany(m => m.GetAllDocuments())
-                .Where(d => !d.Url.EndsWith(".g.cs"))
                 .Distinct()
                 .ToArray();
         }
