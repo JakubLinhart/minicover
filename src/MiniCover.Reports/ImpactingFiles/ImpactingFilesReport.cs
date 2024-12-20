@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using MiniCover.Core.Hits;
 using MiniCover.Core.Model;
 using MiniCover.Reports.Helpers;
@@ -17,8 +18,8 @@ namespace MiniCover.Reports.ImpactingFiles
             _hitsReader = hitsReader;
             _summaryFactory = summaryFactory;
         }
-
-        public int Execute(InstrumentationResult result, string hitsDirectory)
+        
+        public IEnumerable<string> GetImpactingFiles(InstrumentationResult result, string hitsDirectory)
         {
             var hitsInfo = _hitsReader.TryReadFromDirectory(hitsDirectory);
             var files = result.GetSourceFiles();
@@ -26,9 +27,16 @@ namespace MiniCover.Reports.ImpactingFiles
                 .Where(row => row.File && row.Summary.CoveredBranches > 0)
                 .SelectMany(row => row.SourceFiles);
 
-            foreach (var file in impactedFiles)
+            return impactedFiles.Select(file => file.Path);
+        }
+
+        public int Execute(InstrumentationResult result, string hitsDirectory)
+        {
+            var impactingFiles = GetImpactingFiles(result, hitsDirectory);
+
+            foreach (var file in impactingFiles)
             {
-                System.Console.WriteLine(file.Path);
+                System.Console.WriteLine(file);
             }
 
             return 0;
