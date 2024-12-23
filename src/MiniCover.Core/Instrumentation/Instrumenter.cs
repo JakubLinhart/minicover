@@ -51,7 +51,6 @@ namespace MiniCover.Core.Instrumentation
 
             var hashCalculationWatch = Stopwatch.StartNew();
             var assemblyGroups = context.Assemblies
-                .AsParallel()
                 .Where(ShouldInstrumentAssemblyFile)
                 .GroupBy(FileUtils.GetFileHash)
                 .ToArray();
@@ -127,8 +126,16 @@ namespace MiniCover.Core.Instrumentation
                     _fileSystem.File.Copy(pdbFile.FullName, pdbBackupFile.FullName, true);
 
                     //Override assembly
-                    _fileSystem.File.Copy(instrumentedAssembly.TempAssemblyFile, assemblyFile.FullName, true);
-                    _fileSystem.File.Copy(instrumentedAssembly.TempPdbFile, pdbFile.FullName, true);
+                    try
+                    {
+                        _fileSystem.File.Copy(instrumentedAssembly.TempAssemblyFile, assemblyFile.FullName, true);
+                        _fileSystem.File.Copy(instrumentedAssembly.TempPdbFile, pdbFile.FullName, true);
+                    }
+                    catch (Exception)
+                    {
+                        _logger.LogError("Failed to override assembly file {assemblyFile}", assemblyFile.FullName);
+                        throw;
+                    }
 
                     //Copy instrumentation dependencies
                     var assemblyDirectory = assemblyFile.Directory;
