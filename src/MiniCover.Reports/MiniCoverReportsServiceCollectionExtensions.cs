@@ -6,6 +6,7 @@ using MiniCover.Reports.Console;
 using MiniCover.Reports.Coveralls;
 using MiniCover.Reports.Helpers;
 using MiniCover.Reports.Html;
+using MiniCover.Reports.ImpactingFiles;
 using MiniCover.Reports.NCover;
 using MiniCover.Reports.OpenCover;
 
@@ -27,6 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IHtmlSourceFileReport, HtmlSourceFileReport>();
             services.TryAddSingleton<IConsoleReport, ConsoleReport>();
             services.TryAddSingleton<ICoverallsReport, CoverallsReport>();
+            services.TryAddSingleton<IImpactingFilesReport, ImpactingFilesReport>();
 
             return services;
         }
