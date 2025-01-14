@@ -40,26 +40,29 @@ namespace MiniCover.Core.Instrumentation
         {
             var assemblyDirectory = assemblyFile.Directory;
 
-            var resolver = ActivatorUtilities.CreateInstance<CustomAssemblyResolver>(_serviceProvider, assemblyDirectory);
-
-            _logger.LogTrace("Assembly resolver search directories: {directories}", new object[] { resolver.GetSearchDirectories() });
-
-            try
+            using (var resolver = ActivatorUtilities.CreateInstance<CustomAssemblyResolver>(_serviceProvider, assemblyDirectory))
             {
-                using (var assemblyDefinition = AssemblyDefinition.ReadAssembly(assemblyFile.FullName,
-                           new ReaderParameters { ReadSymbols = true, AssemblyResolver = resolver }))
+
+                _logger.LogTrace("Assembly resolver search directories: {directories}",
+                    new object[] { resolver.GetSearchDirectories() });
+
+                try
                 {
-                    return InstrumentAssemblyDefinition(context, assemblyDefinition);
+                    using (var assemblyDefinition = AssemblyDefinition.ReadAssembly(assemblyFile.FullName,
+                               new ReaderParameters { ReadSymbols = true, AssemblyResolver = resolver }))
+                    {
+                        return InstrumentAssemblyDefinition(context, assemblyDefinition);
+                    }
                 }
-            }
-            catch (BadImageFormatException)
-            {
-                _logger.LogInformation("Invalid assembly format");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"{assemblyFile.FullName} instrumentation failed.", ex);
+                catch (BadImageFormatException)
+                {
+                    _logger.LogInformation("Invalid assembly format");
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"{assemblyFile.FullName} instrumentation failed.", ex);
+                }
             }
         }
 
