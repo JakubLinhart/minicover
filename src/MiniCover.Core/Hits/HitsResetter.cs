@@ -2,6 +2,7 @@
 using System.IO.Abstractions;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using MiniCover.HitServices;
 
 namespace MiniCover.Core.Hits
 {
@@ -52,6 +53,7 @@ namespace MiniCover.Core.Hits
                 return false;
             }
 
+            HitContext.Current = null;
             _logger.LogInformation("Reset operation completed without errors");
             return true;
         }
