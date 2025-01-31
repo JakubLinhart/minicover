@@ -18,6 +18,8 @@ namespace MiniCover.Core.Hits
 
         public bool ResetHits(IDirectoryInfo hitsDirectory)
         {
+            HitContext.Current = null;
+
             _logger.LogInformation("Resetting hits directory '{directory}'", hitsDirectory.FullName);
 
             var hitsFiles = hitsDirectory.Exists
@@ -53,7 +55,6 @@ namespace MiniCover.Core.Hits
                 return false;
             }
 
-            HitContext.Current = null;
             _logger.LogInformation("Reset operation completed without errors");
             return true;
         }
