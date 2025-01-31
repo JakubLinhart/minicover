@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MiniCover.Core.Model;
 using MiniCover.Core.Utils;
@@ -54,13 +53,13 @@ namespace MiniCover.Core.Instrumentation
                 .GroupBy(FileUtils.GetFileHash)
                 .ToArray();
 
-            Parallel.ForEach(assemblyGroups, assemblyGroup =>
+            foreach (var assemblyGroup in assemblyGroups)
             {
                 VisitAssemblyGroup(
                     context,
                     result,
                     assemblyGroup.ToArray());
-            });
+            }
 
             return result;
         }
