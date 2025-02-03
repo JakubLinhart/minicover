@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 using MiniCover.HitServices;
 
 namespace MiniCover.Core.Hits
@@ -10,10 +11,12 @@ namespace MiniCover.Core.Hits
     public class HitsReader : IHitsReader
     {
         private readonly IFileSystem _fileSystem;
+        private readonly ILogger<HitsReader> _logger;
 
-        public HitsReader(IFileSystem fileSystem)
+        public HitsReader(IFileSystem fileSystem, ILogger<HitsReader> logger)
         {
             _fileSystem = fileSystem;
+            _logger = logger;
         }
 
         public HitsInfo TryReadFromDirectory(string path)
@@ -52,6 +55,7 @@ namespace MiniCover.Core.Hits
                     }
                     // Exponential backoff: 2^retryCount * 100 milliseconds
                     var delay = (int)Math.Pow(2, retryCount) * backoffDelayMs;
+                    _logger.LogWarning($"Failed to open file {fileName}, retrying in {delay} ms.");
                     Thread.Sleep(delay);
                 }
             }

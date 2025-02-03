@@ -63,7 +63,7 @@ namespace MiniCover.HitServices
 
                 var fileName = Path.Combine(_hitsPath, $"{_hitContext.Id}.hits");
 
-                using (var fileStream = File.Open(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+                using (var fileStream = File.Open(fileName, FileMode.Create))
                 {
                     _hitContext.Serialize(fileStream);
                     fileStream.Flush();
